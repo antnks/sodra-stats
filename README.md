@@ -11,7 +11,7 @@ Copy one or more ZIP files that contain `VIDURKIAI.CSV` from Sodra into the same
 
 `python2 vidurkiai.py`
 
-If there was only one ZIP - you will get one month output
+If there was only one ZIP - you will get one month detailed output
 
 If there were more ZIPS - you will get CSV with average salary for given months. Can be used for graph plot, like:
 
