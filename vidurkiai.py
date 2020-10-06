@@ -3,9 +3,16 @@ import csv
 from StringIO import StringIO
 from zipfile import ZipFile
 from urllib import urlopen
+from os import listdir
 
-resp = urlopen("http://sodra.is.lt/Failai/Vidurkiai.zip")
-zipfile = ZipFile(StringIO(resp.read()))
+inputfiles = list()
+for f in listdir("."):
+	filename = f.lower()
+	if filename.endswith(".zip"):
+		inputfiles.append(f)
+
+inputfiles.sort()
+#print (inputfiles)
 
 names = {}
 names["111620231"] = "IBM"
@@ -44,23 +51,76 @@ names["302350785"] = "Unity"
 names["304447756"] = "Helis"
 names["301566552"] = "Softera"
 
-print ('%-25s %-10s %-10s %-10s %-10s %-10s' % ("Company", "Average", "Mediana", "25_kv", "75_kv", "std_dev"))
-print ('%-25s %-10s %-10s %-10s %-10s %-10s' % ("-", "-", "-", "-", "-", "-"))
+if len(inputfiles) == 1:
 
-lines = csv.reader(zipfile.open("VIDURKIAI.CSV"), delimiter=';', quotechar='"')
+	resp = open(inputfiles[0])
+	zipfile = ZipFile(StringIO(resp.read()))
+
+	print ('%-25s %-10s %-10s %-10s %-10s %-10s' % ("Company", "Average", "Mediana", "25_kv", "75_kv", "std_dev"))
+	print ('%-25s %-10s %-10s %-10s %-10s %-10s' % ("-", "-", "-", "-", "-", "-"))
+
+	lines = csv.reader(zipfile.open("VIDURKIAI.CSV"), delimiter=';', quotechar='"')
+
+	for row in lines:
+
+		try:
+			company = names [row[0].strip()]
+		except KeyError:
+			continue
+
+		print('%-25s %-10s %-10s %-10s %-10s %-10s' % ( \
+		company,
+		row[2].strip(),
+		row[3].strip(),
+		row[4].strip(),
+		row[5].strip(),
+		row[6].strip() ))
+
+elif len(inputfiles) > 1:
+
+	averages = {}
+	for f in inputfiles:
+
+		resp = open(f)
+		zipfile = ZipFile(StringIO(resp.read()))
+
+		lines = csv.reader(zipfile.open("VIDURKIAI.CSV"), delimiter=';', quotechar='"')
+
+		for row in lines:
+
+			try:
+				company = names [row[0].strip()]
+				value = row[2].strip().replace(",", ".")
+			except KeyError:
+				continue
+
+			try:
+				f = f.replace("Vidurkiai_","")
+				f = f.replace(".zip","")
+				averages[company][f] = value
+			except KeyError:
+				averages[company] = dict()
+				averages[company][f] = value
 	
-for row in lines:
-	
-	try:
-		company = names [row[0].strip()]
-	except KeyError:
-		continue
+	months = list()
+	for company in averages:
+		months = sorted(averages[company])
+		break
 
-	print('%-25s %-10s %-10s %-10s %-10s %-10s' % ( \
-	company,
-	row[2].strip(),
-	row[3].strip(),
-	row[4].strip(),
-	row[5].strip(),
-	row[6].strip() ))
+	results = list()
+	for company in averages:
+		avg = list()
+		avg.append(company)
+		for month in months:
+			avg.append(averages[company][month])
+		results.append(avg)
 
+	print(";"),
+	for month in months:
+		print (month + ";"),
+	print("")
+
+	for res in results:
+		for r in res:
+			print (r + ";"),
+		print("")
