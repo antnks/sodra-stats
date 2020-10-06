@@ -77,12 +77,18 @@ if len(inputfiles) == 1:
 
 elif len(inputfiles) > 1:
 
-	averages = {}
+	averages = dict()
+	months = list()
+
 	for f in inputfiles:
 
 		zipfile = ZipFile(f)
 		vidurkiai = zipfile.open("VIDURKIAI.CSV", "r")
 		lines = csv.reader(TextIOWrapper(vidurkiai, "latin-1"), delimiter=';')
+
+		f = f.replace("Vidurkiai_","")
+		f = f.replace(".zip","")
+		months.append(f)
 
 		for row in lines:
 
@@ -93,17 +99,12 @@ elif len(inputfiles) > 1:
 				continue
 
 			try:
-				f = f.replace("Vidurkiai_","")
-				f = f.replace(".zip","")
 				averages[company][f] = value
 			except KeyError:
 				averages[company] = dict()
 				averages[company][f] = value
 
-	months = list()
-	for company in averages:
-		months = sorted(averages[company])
-		break
+	months.sort()
 
 	results = list()
 	for company in averages:
