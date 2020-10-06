@@ -1,8 +1,7 @@
 import csv
 
-from StringIO import StringIO
+from io import TextIOWrapper
 from zipfile import ZipFile
-from urllib import urlopen
 from os import listdir
 
 inputfiles = list()
@@ -51,15 +50,15 @@ names["302350785"] = "Unity"
 names["304447756"] = "Helis"
 names["301566552"] = "Softera"
 
-if len(inputfiles) == 1:
 
-	resp = open(inputfiles[0])
-	zipfile = ZipFile(StringIO(resp.read()))
+if len(inputfiles) == 1:
 
 	print ('%-25s %-10s %-10s %-10s %-10s %-10s' % ("Company", "Average", "Mediana", "25_kv", "75_kv", "std_dev"))
 	print ('%-25s %-10s %-10s %-10s %-10s %-10s' % ("-", "-", "-", "-", "-", "-"))
 
-	lines = csv.reader(zipfile.open("VIDURKIAI.CSV"), delimiter=';', quotechar='"')
+	zipfile = ZipFile(inputfiles[0])
+	vidurkiai = zipfile.open("VIDURKIAI.CSV", "r")
+	lines = csv.reader(TextIOWrapper(vidurkiai, "latin-1"), delimiter=';')
 
 	for row in lines:
 
@@ -81,10 +80,9 @@ elif len(inputfiles) > 1:
 	averages = {}
 	for f in inputfiles:
 
-		resp = open(f)
-		zipfile = ZipFile(StringIO(resp.read()))
-
-		lines = csv.reader(zipfile.open("VIDURKIAI.CSV"), delimiter=';', quotechar='"')
+		zipfile = ZipFile(f)
+		vidurkiai = zipfile.open("VIDURKIAI.CSV", "r")
+		lines = csv.reader(TextIOWrapper(vidurkiai, "latin-1"), delimiter=';')
 
 		for row in lines:
 
@@ -101,7 +99,7 @@ elif len(inputfiles) > 1:
 			except KeyError:
 				averages[company] = dict()
 				averages[company][f] = value
-	
+
 	months = list()
 	for company in averages:
 		months = sorted(averages[company])
@@ -115,12 +113,12 @@ elif len(inputfiles) > 1:
 			avg.append(averages[company][month])
 		results.append(avg)
 
-	print(";"),
+	print(";", end="")
 	for month in months:
-		print (month + ";"),
+		print (month + ";", end="")
 	print("")
 
 	for res in results:
 		for r in res:
-			print (r + ";"),
+			print (r + ";", end="")
 		print("")
