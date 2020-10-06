@@ -3,7 +3,7 @@ Outputs public salary stats of Sodra for selected companies
 
 # Requirements
 
-`Python 2`
+`Python 3`
 
 # Usage
 
