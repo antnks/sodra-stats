@@ -1,6 +1,10 @@
 # sodra-stats
 Outputs public salary stats of Sodra for selected companies
 
+# Requirements
+
+`Python 2`
+
 # Usage
 
 Copy one or more ZIP files that contain `VIDURKIAI.CSV` from Sodra into the same dir and run:
