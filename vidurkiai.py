@@ -111,7 +111,10 @@ elif len(inputfiles) > 1:
 		avg = list()
 		avg.append(company)
 		for month in months:
-			avg.append(averages[company][month])
+			try:
+				avg.append(averages[company][month])
+			except KeyError:
+				avg.append("-")
 		results.append(avg)
 
 	print(";", end="")
