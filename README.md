@@ -9,7 +9,7 @@ Outputs public salary stats of Sodra for selected companies
 
 Copy one or more ZIP files that contain `VIDURKIAI.CSV` from Sodra into the same dir and run:
 
-`python2 vidurkiai.py`
+`python3 vidurkiai.py`
 
 If there was only one ZIP - you will get one month detailed output
 
